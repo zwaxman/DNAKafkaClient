@@ -42,14 +42,14 @@ export default function(state = initialState, action) {
       if (!state[userId]) {
         return {
           ...state,
-          [userId]: {matches: [], sequence: [{base, match: false}]}
+          [userId]: {matches: {}, sequence: [{base, matches: []}]}
         }
       } else {
         return {
           ...state,
           [userId]: {
             ...state[userId],
-            sequence: [...state[userId].sequence, {base, match: false}]
+            sequence: [...state[userId].sequence, {base, matches: []}]
           }
         }
       }
@@ -64,13 +64,18 @@ export default function(state = initialState, action) {
       const {userId, index, target} = action.data
       const newSequence = [...state[userId].sequence]
       for (let i = index; i < index + target.length; i++) {
-        newSequence[i].match = true
+        newSequence[i].matches.push(target)
       }
       return {
         ...state,
         [userId]: {
           sequence: newSequence,
-          matches: [...state[userId].matches, index]
+          matches: {
+            ...state[userId].matches,
+            [target]: state[userId].matches[target]
+              ? [...state[userId].matches[target], index]
+              : [index]
+          }
         }
       }
       // return state.map(user => {

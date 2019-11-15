@@ -17,7 +17,7 @@ module.exports = (socket, topics) => {
     clearInterval(end)
     client.sendRecord({base: '.', index})
     // Producer.sendRecord({type, userId, base: '.', index})
-  }, 10000)
+  }, 25000)
 }
 
 // const users = [

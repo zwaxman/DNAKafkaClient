@@ -16,37 +16,37 @@ const options = {
 
 const createConsumer = io => {
   const consumer = new kafka.Consumer(client, topics, options)
-  console.log(process.env.TARGET)
-  const target = process.env.TARGET || 'AAA'
-  let matchingIndices = {}
+  console.log(process.env.TOPIC)
 
   consumer.on('message', function(message) {
-    // Read string into a buffer.
+    // // Read string into a buffer.
     var buf = new Buffer(message.value, 'binary')
     var decodedMessage = JSON.parse(buf.toString())
-    let {userId, base, index} = decodedMessage
-    //Events is a Sequelize Model Object.
-    // return Events.create({
-    //     id: decodedMessage.id,
-    //     type: decodedMessage.type,
-    //     userId: decodedMessage.userId,
-    //     sessionId: decodedMessage.sessionId,
-    //     data: JSON.stringify(decodedMessage.data),
-    //     createdAt: new Date()
-    // });
-    if (!matchingIndices[userId]) {
-      matchingIndices[userId] = 0
-    }
-    if (base === target[matchingIndices[userId]]) {
-      matchingIndices[userId]++
-    } else {
-      matchingIndices[userId] = 0
-    }
-    io.emit('sendBase', {userId, base})
-    if (matchingIndices[userId] === target.length) {
-      io.emit('sendMatch', {userId, index: index - target.length + 2, target})
-      matchingIndices[userId] = 0
-    }
+    let {userId, index, target} = decodedMessage
+    io.emit('sendMatch', decodedMessage)
+    console.log('received match', decodedMessage)
+    // //Events is a Sequelize Model Object.
+    // // return Events.create({
+    // //     id: decodedMessage.id,
+    // //     type: decodedMessage.type,
+    // //     userId: decodedMessage.userId,
+    // //     sessionId: decodedMessage.sessionId,
+    // //     data: JSON.stringify(decodedMessage.data),
+    // //     createdAt: new Date()
+    // // });
+    // if (!matchingIndices[userId]) {
+    //   matchingIndices[userId] = 0
+    // }
+    // if (base === target[matchingIndices[userId]]) {
+    //   matchingIndices[userId]++
+    // } else {
+    //   matchingIndices[userId] = 0
+    // }
+    // io.emit('sendBase', {userId, base})
+    // if (matchingIndices[userId] === target.length) {
+    //   io.emit('sendMatch', {userId, index: index - target.length + 2, target})
+    //   matchingIndices[userId] = 0
+    // }
   })
 
   consumer.on('error', function(err) {

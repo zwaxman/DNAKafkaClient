@@ -27,3 +27,25 @@ form div {
 .match {
   color: red;
 }
+
+.user-container {
+  margin: 25px 15px;
+  padding: 3px;
+  border-top: 1px solid yellowgreen;
+  border-bottom: 1px solid yellowgreen;
+  line-height: 30px;
+}
+
+.form-group {
+  display: flex;
+  align-items: baseline;
+}
+
+.hover {
+  background-color: rgb(255, 255, 0, 0.5);
+}
+
+.user-container .sequence {
+  margin: 10px 15px;
+  line-height: 20px;
+}

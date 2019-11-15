@@ -95,6 +95,7 @@ const createApp = () => {
   })
 }
 
+let io
 const startListening = () => {
   // start listening (and create a 'server' object representing our server)
   const server = app.listen(PORT, () =>
@@ -102,10 +103,12 @@ const startListening = () => {
   )
 
   // set up our socket control center
-  const io = socketio(server)
+  io = socketio(server)
   require('./socket')(io)
   const consumer = createConsumer(io)
 }
+
+module.exports.io = io
 
 const syncDb = () => db.sync()
 

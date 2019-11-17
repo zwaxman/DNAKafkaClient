@@ -105,3 +105,8 @@ select {
 .required {
   font-size: 10px;
 }
+
+nav {
+  border-bottom: 1px solid yellowgreen;
+  margin-bottom: 20px;
+}

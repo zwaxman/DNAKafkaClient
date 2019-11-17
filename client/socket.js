@@ -26,7 +26,7 @@ socket.on('sendBase', data => {
 socket.on('sendMatch', match => {
   store.dispatch(addMatch(match))
   store.dispatch(updateMessage(match))
-  setTimeout(() => store.dispatch(clearMessage(match.userId)), 2000)
+  setTimeout(() => store.dispatch(clearMessage(match.userId)), 1000)
 })
 
 socket.on('sendTopics', topics => {

@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import user from './client/store/user'
 import socket from './client/socket'
 
-const validBases = 'ACGTU>.X'
+const validBases = 'ACGT'
+// could include >.X+*()/\
 
 class Consumer extends React.Component {
   constructor(props) {

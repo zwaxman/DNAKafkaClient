@@ -1,12 +1,12 @@
-import axios from 'axios'
-import history from '../history'
-
+/* eslint-disable complexity */
 /**
  * ACTION TYPES
  */
 const ADD_BASE = 'ADD_BASE'
 const ADD_MATCH = 'ADD_MATCH'
-const HIGHLIGHT_MATCH = 'HIGHLIGHT_MATCH'
+const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
+const CLEAR_MESSAGE = 'CLEAR_MESSAGE'
+const REGISTER_USER = 'REGISTER_USER'
 
 /**
  * INITIAL STATE
@@ -18,7 +18,9 @@ const initialState = {}
  */
 export const addBase = data => ({type: ADD_BASE, data})
 export const addMatch = data => ({type: ADD_MATCH, data})
-export const highlightMatch = match => ({type: HIGHLIGHT_MATCH, match})
+export const updateMessage = data => ({type: UPDATE_MESSAGE, data})
+export const clearMessage = userId => ({type: CLEAR_MESSAGE, userId})
+export const registerUser = data => ({type: REGISTER_USER, data})
 
 /**
  * THUNK CREATORS
@@ -37,12 +39,19 @@ export const highlightMatch = match => ({type: HIGHLIGHT_MATCH, match})
  */
 export default function(state = initialState, action) {
   switch (action.type) {
+    case REGISTER_USER: {
+      const {userId, topics} = action.data
+      return {
+        ...state,
+        [userId]: {topics, message: '', matches: {}, sequence: []}
+      }
+    }
     case ADD_BASE: {
       const {userId, base} = action.data
       if (!state[userId]) {
         return {
           ...state,
-          [userId]: {matches: {}, sequence: [{base, matches: []}]}
+          [userId]: {message: '', matches: {}, sequence: [{base, matches: []}]}
         }
       } else {
         return {
@@ -53,12 +62,6 @@ export default function(state = initialState, action) {
           }
         }
       }
-      // const sameUser = state.find(user => user.userId===action.data.userId)
-      // if (sameUser) {
-      //     return [...state.filter(user => user.userId!==action.data.userId), {...sameUser, sequence: [...sameUser.sequence, action.data.base]}]
-      // } else {
-      //     return [...state, {userId: action.data.userId, sequence: [action.data.base]}]
-      // }
     }
     case ADD_MATCH: {
       const {userId, index, target} = action.data
@@ -69,27 +72,29 @@ export default function(state = initialState, action) {
       return {
         ...state,
         [userId]: {
+          ...state[userId],
           sequence: newSequence,
           matches: {
             ...state[userId].matches,
             [target]: state[userId].matches[target]
-              ? [...state[userId].matches[target], index]
+              ? [...state[userId].matches[target], index].sort(
+                  (A, B) => (A > B ? 1 : -1)
+                )
               : [index]
           }
         }
       }
-      // return state.map(user => {
-      //     if (user.userId===action.data.userId) {
-      //         const newSequence = [...user.sequence]
-      //         newSequence[action.data.index] = `<strong class='match>${newSequence[action.data.index]}</strong>`
-      //         return {...user, sequence: newSequence}
-      //     } else {
-      //         return user
-      //     }
-      // })
     }
-    // case HIGHLIGHT_MATCH:
-    //     return state.slice(0, state.length-action.match.target.length+1)+`<strong class='match'>${action.match.target})</strong>`
+    case UPDATE_MESSAGE: {
+      const {userId, target} = action.data
+      return {
+        ...state,
+        [userId]: {...state[userId], message: `New match - target: ${target}`}
+      }
+    }
+    case CLEAR_MESSAGE: {
+      return {...state, [action.userId]: {...state[action.userId], message: ''}}
+    }
     default:
       return state
   }

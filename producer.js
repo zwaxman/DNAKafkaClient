@@ -29,6 +29,8 @@ const Client = (socket, topics) => {
   })
 
   return {
+    userId,
+
     sendRecord: ({base, index}, callback = () => {}) => {
       if (!bases.includes(base)) {
         return callback(new Error(`Invalid base`))
@@ -52,7 +54,7 @@ const Client = (socket, topics) => {
         attributes: 1 /* Use GZip compression for the payload */
       }))
 
-      producer.send(records, callback)
+      producer.send(records, () => console.log('sent record:', event))
       socket.emit('sendBase', {userId, base})
       //Send record to Kafka and log result/error
     }

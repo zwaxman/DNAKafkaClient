@@ -7,6 +7,10 @@ import {logout} from '../store'
 const Navbar = ({handleClick, isLoggedIn}) => (
   <div>
     <h1>RiboRunner</h1>
+    <h4>Cloud-based, streaming DNA analysis</h4>
+    <h5>
+      (powered by <em>Apache Kafka</em> and <em>Socket.io</em>)
+    </h5>
     <nav>
       {isLoggedIn ? (
         <div>

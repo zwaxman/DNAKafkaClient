@@ -1,15 +1,20 @@
 const Client = require('./producer')
 const bases = 'ACGT'
 
-module.exports = (socket, topics) => {
-  const client = Client(socket, topics)
+module.exports = (socket, data, clientConsumer) => {
+  const {selectedTopics, sequence} = data
+  const client = Client(socket, selectedTopics)
   let index = 0
+  console.log(client.userId)
+  clientConsumer.addUser(client.userId)
+  socket.emit('registerUser', {userId: client.userId, topics: selectedTopics})
   client.sendRecord({base: '>', index})
 
   const end = setInterval(() => {
-    const base = bases[Math.floor(Math.random() * bases.length)]
+    const base = sequence
+      ? sequence[index]
+      : bases[Math.floor(Math.random() * bases.length)]
     client.sendRecord({base, index})
-    console.log('sent record:', {base, index})
     index++
   }, 100)
 

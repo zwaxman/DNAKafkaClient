@@ -2,7 +2,7 @@ import React from 'react'
 
 const Navbar = () => (
   <div>
-    <h1>RiboRunner</h1>
+    <h1>RiboRunner - Client Portal</h1>
     <h4>Cloud-based, streaming DNA analysis</h4>
     <h5>
       (powered by <em>Apache Kafka</em> and <em>Socket.io</em>)

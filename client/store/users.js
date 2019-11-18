@@ -64,24 +64,37 @@ export default function(state = initialState, action) {
       }
     }
     case ADD_MATCH: {
-      const {userId, index, target} = action.data
+      const {userId, index, target, topics, description} = action.data
       const newSequence = [...state[userId].sequence]
       for (let i = index; i < index + target.length; i++) {
         newSequence[i].matches.push(target)
+      }
+      let newMatches = {...state[userId].matches}
+      if (!newMatches[target]) {
+        newMatches = {
+          ...newMatches,
+          [target]: {indices: [index], topics: [{topics, description}]}
+        }
+      } else {
+        let newTarget = {...newMatches[target]}
+        newTarget = {
+          indices: newTarget.indices.includes(index)
+            ? newTarget.indices
+            : [...newTarget.indices, index].sort((A, B) => (A > B ? 1 : -1)),
+          topics: newTarget.topics
+            .map(topic => JSON.stringify(topic.topics))
+            .includes(JSON.stringify(topics))
+            ? newTarget.topics
+            : [...newTarget.topics, {topics, description}]
+        }
+        newMatches = {...newMatches, [target]: newTarget}
       }
       return {
         ...state,
         [userId]: {
           ...state[userId],
           sequence: newSequence,
-          matches: {
-            ...state[userId].matches,
-            [target]: state[userId].matches[target]
-              ? [...state[userId].matches[target], index].sort(
-                  (A, B) => (A > B ? 1 : -1)
-                )
-              : [index]
-          }
+          matches: newMatches
         }
       }
     }

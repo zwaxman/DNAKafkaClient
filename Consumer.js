@@ -89,6 +89,7 @@ class Consumer extends React.Component {
                 name="DNAinput"
                 value={DNAinput}
                 onChange={this.handleChange}
+                autoComplete="off"
               />
               <button
                 type="submit"
@@ -96,8 +97,8 @@ class Consumer extends React.Component {
               >
                 Submit
               </button>
-              <span className="message">{inputMessage}</span>
             </form>
+            <div className="required">{inputMessage}</div>
             <div>-or-</div>
             <button
               type="button"
@@ -134,8 +135,10 @@ class Consumer extends React.Component {
             ]
             return (
               <div className="user-container" key={userId}>
-                <div>User ID: {userId}</div>
-                <div>Broadcasting to topics: {userTopics.join(', ')}</div>
+                <div>Sequence ID: {userId}</div>
+                <div>
+                  Broadcasting to topics: <em>{userTopics.join(', ')}</em>
+                </div>
                 <div className="sequence">
                   {sequence.map((base, i) => {
                     return base.matches.includes(targets[userId]) ? (
@@ -165,10 +168,18 @@ class Consumer extends React.Component {
                   </select>
                   <span className="message">{message}</span>
                 </div>
+                {matches[targets[userId]]
+                  ? matches[targets[userId]].topics.map((topic, i) => (
+                      <div key={i}>
+                        Description: <em>{topic.description}</em> | from topics:{' '}
+                        <em>{topic.topics.join(', ')}</em>
+                      </div>
+                    ))
+                  : null}
                 <div>
                   Matching indices:{' '}
                   {matches[targets[userId]]
-                    ? matches[targets[userId]].map((index, i) => (
+                    ? matches[targets[userId]].indices.map((index, i) => (
                         <span
                           key={index}
                           id={`${userId}_${index}`}
@@ -176,7 +187,7 @@ class Consumer extends React.Component {
                           onMouseLeave={this.handleMouseLeave}
                         >
                           {index}
-                          {i !== matches[targets[userId]].length - 1
+                          {i !== matches[targets[userId]].indices.length - 1
                             ? ', '
                             : ''}
                         </span>
